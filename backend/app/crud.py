@@ -12,8 +12,12 @@ async def create_db_url(url: ShortURL) -> URL:
     if url.url_key is None or url.url_key == "":
         url.url_key = create_random_key(5)
 
-    if (await get_db_url_by_key(url.url_key)).target_url != url.target_url:
-        return None
+    # if (await get_db_url_by_key(url.url_key)).target_url != url.target_url:
+    #     return None
+    
+    if db_url := await get_db_url_by_key(url.url_key):
+        if db_url.target_url != url.target_url:
+            return None
 
     if db_url := await URL.find_one(URL.target_url==url.target_url):
         if url.url_key in db_url.url_key:

@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from pydantic import AnyUrl, BaseModel, SecretStr
+from pydantic import BaseModel, SecretStr
 
 
 class CreateShortURL(BaseModel):
-    target_url: AnyUrl
+    target_url: str
     url_key: Optional[str]
 
 
