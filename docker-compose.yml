@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    db:
+        container_name: mongodb
+        image: mongo:latest
+        volumes:
+            - app-db-data:/data/db
+        env_file:
+            - .env
+        ports:
+            - "${MONGO_PORT}:${MONGO_PORT}"
+        environment:
+            - "MONGO_INITDB_DATABASE=${MONGO_DB}"
+            - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}"
+            - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
+    
+    backend:
+        container_name: backend
+        depends_on:
+            - db
+        env_file:
+            - .env
+        volumes:
+            - ./backend:/app
+        ports:
+            - "8000:80"
+        environment:
+            - SERVER_HOST=http://${DOMAIN?Variable not set}
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        command: sh /start-reload.sh
+    
+volumes:
+    app-db-data:
